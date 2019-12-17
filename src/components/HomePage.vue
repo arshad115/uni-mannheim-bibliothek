@@ -1,12 +1,12 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
       check out the 
       {{error}}
 
-      <line-chart></line-chart>
+      {{a5}}
+
     </p>
   </div>
 </template>
@@ -37,16 +37,16 @@ export default {
     }
   },
   mounted () {
-    this.renderChart({
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-        {
-          label: 'Data One',
-          backgroundColor: '#f87979',
-          data: [40, 39, 10, 40, 39, 80, 40]
-        }
-      ]
-    }, {responsive: true, maintainAspectRatio: false})
+    // this.renderChart({
+    //   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    //   datasets: [
+    //     {
+    //       label: 'Data One',
+    //       backgroundColor: '#f87979',
+    //       data: [40, 39, 10, 40, 39, 80, 40]
+    //     }
+    //   ]
+    // }, {responsive: true, maintainAspectRatio: false})
   }
 }
 </script>
