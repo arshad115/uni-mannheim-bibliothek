@@ -22,7 +22,6 @@ if (process.env.NODE_ENV === 'production') {
 }
   
 async function loadBib(library) {
-    console.log(process.env.DB_CONNECTION)
     const client = await mongodb.MongoClient.connect(process.env.DB_CONNECTION, { useNewUrlParser: true });
     return client.db("bibliothek").collection(library);
 }
