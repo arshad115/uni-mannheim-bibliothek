@@ -15,6 +15,11 @@ app.get('/api/:lib', async (req, res) =>{
     const a5 = await loadBib(req.params.lib);
     res.send(await a5.find({}).toArray());
 });
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(__dirname + '/public/')); //Static 
+    app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html')); //SPA
+}
   
 async function loadBib(library) {
     console.log(process.env.DB_CONNECTION)
