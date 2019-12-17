@@ -1,18 +1,17 @@
 <template>
   <div class="hello">
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the 
+      <div id="chart">
+        <canvas id="bib-chart"></canvas>
+      </div>
+      {{chartData}}
       {{error}}
 
-      {{a5}}
-
-    </p>
   </div>
 </template>
 
 <script>
 import BibService from "../bibservice";
+import Chart from 'chart.js';
 export default {
   name: 'HomePage',
   data() {
@@ -22,7 +21,26 @@ export default {
       bwl: [],
       ehrenhof: [],
       learncenter: [],
-      error: ''
+      error: '',
+      chartData: {
+      type: 'line',
+      data: {
+        labels: [this.chartLabels],
+        datasets: []
+      },
+      options: {
+        responsive: true,
+        lineTension: 1,
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              padding: 25,
+            }
+          }]
+        }
+      }
+    }
     }
   },
   async created() {
@@ -32,22 +50,51 @@ export default {
       this.bwl = await BibService.getBib("bwl");
       this.ehrenhof = await BibService.getBib("ehrenhof");
       this.learncenter = await BibService.getBib("learncenter");
+      console.log(this.a3.data);
+      this.a3.data[0].forEach(element => {
+        const time = element.t;
+        this.chartData.data.labels.push(time)
+      });  
+      this.chartData.data.datasets.push(this.a5, this.a3, this.bwl, this.ehrenhof, this.learncenter);
     } catch (err) {
       this.error = err;
     }
   },
   mounted () {
-    // this.renderChart({
-    //   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    //   datasets: [
-    //     {
-    //       label: 'Data One',
-    //       backgroundColor: '#f87979',
-    //       data: [40, 39, 10, 40, 39, 80, 40]
-    //     }
-    //   ]
-    // }, {responsive: true, maintainAspectRatio: false})
+    // this.createChart(this.chartData);
+  },
+  methods: {
+  createChart(chartData) {
+    const ctx = document.getElementById('bib-chart');
+    const myChart = new Chart(ctx, {
+      type: chartData.type,
+      data: chartData.data,
+      options: chartData.options,
+    });
   }
+//   getChartData() {
+//     const localChartData = {
+//       type: 'line',
+//       data: {
+//         labels: [],
+//         datasets: []
+//       },
+//       options: {
+//         responsive: true,
+//         lineTension: 1,
+//         scales: {
+//           yAxes: [{
+//             ticks: {
+//               beginAtZero: true,
+//               padding: 25,
+//             }
+//           }]
+//         }
+//       }
+//     }
+//     return localChartData;
+//   }
+}
 }
 </script>
 
