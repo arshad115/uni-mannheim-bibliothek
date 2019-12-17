@@ -11,7 +11,7 @@ app.use(cors());
 
 
 // Routes
-app.get('/:lib', async (req, res) =>{
+app.get('/api/:lib', async (req, res) =>{
     const a5 = await loadBib(req.params.lib);
     res.send(await a5.find({}).toArray());
 });

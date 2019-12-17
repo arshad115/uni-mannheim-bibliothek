@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const url = 'http://localhost:5000/';
+const url = 'api/';
 
 class BibService {
     static getBib(library) {
