@@ -3,14 +3,16 @@
       <div id="chart">
         <canvas id="bib-chart"></canvas>
       </div>
-      {{chartData}}
+      <!-- {{chartData}} -->
       {{error}}
 
   </div>
 </template>
 
 <script>
+/* eslint-disable */
 import BibService from "../bibservice";
+import * as constants  from "../libraries"
 import Chart from 'chart.js';
 export default {
   name: 'HomePage',
@@ -25,19 +27,28 @@ export default {
       chartData: {
       type: 'line',
       data: {
-        labels: [this.chartLabels],
+        labels: [],
         datasets: []
       },
       options: {
-        responsive: true,
-        lineTension: 1,
+        // responsive: true,
         scales: {
           yAxes: [{
-            ticks: {
-              beginAtZero: true,
-              padding: 25,
-            }
-          }]
+        ticks: {
+					reverse: false
+        }
+      }],
+          xAxes: [{
+                type: 'time',
+                // time: {
+                //     parser: 'YYYY-MM-DD HH:MM:SS'
+                // },
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Date'
+                }
+            }]
         }
       }
     }
@@ -45,22 +56,35 @@ export default {
   },
   async created() {
     try {
-      this.a5 = await BibService.getBib("a5");
-      this.a3 = await BibService.getBib("a3");
-      this.bwl = await BibService.getBib("bwl");
-      this.ehrenhof = await BibService.getBib("ehrenhof");
-      this.learncenter = await BibService.getBib("learncenter");
-      console.log(this.a3.data);
-      this.a3.data[0].forEach(element => {
-        const time = element.t;
-        this.chartData.data.labels.push(time)
+
+      let startDate = new Date("2019-12-12");
+      let endDate = new Date("2019-12-13");
+
+      // console.log(startDate, endDate);
+      // console.log(constants.Libraries.a3)
+      this.a5 = await BibService.getBib(constants.Libraries.a5, startDate, endDate);
+      this.a3 = await BibService.getBib(constants.Libraries.a3, startDate, endDate);
+      this.bwl = await BibService.getBib(constants.Libraries.bwl, startDate, endDate);
+      this.ehrenhof = await BibService.getBib(constants.Libraries.ehrenhof, startDate, endDate);
+      this.learncenter = await BibService.getBib(constants.Libraries.learncenter, startDate, endDate);
+      // console.log(this.learncenter.data);
+      this.a3.data.forEach(element => {
+        const time = element.x;
+        if (time && time!== null && time!== undefined) {
+          this.chartData.data.labels.push(time);          
+        }
       });  
       this.chartData.data.datasets.push(this.a5, this.a3, this.bwl, this.ehrenhof, this.learncenter);
+      // this.chartData.data.datasets.push(this.a3);
+
+        // console.log(this.chartData);
+        this.createChart(this.chartData);
     } catch (err) {
       this.error = err;
     }
   },
   mounted () {
+    // console.log(this.chartData.data.datasets[0]);
     // this.createChart(this.chartData);
   },
   methods: {

@@ -13,7 +13,13 @@ app.use(cors());
 // Routes
 app.get('/api/:lib', async (req, res) =>{
     const a5 = await loadBib(req.params.lib);
-    res.send(await a5.find({}).toArray());
+    let startDate = new Date(req.query.startDate);
+    let endDate = new Date(req.query.endDate);
+    // fromDate.setDate(fromDate.getDate() - 1);
+    console.log(startDate, endDate);
+    let result = await a5.find({"dateTime": {"$gte": startDate, "$lte": endDate}}).toArray();
+    console.log('result',result);
+    res.send(result);
 });
 
 if (process.env.NODE_ENV === 'production') {
