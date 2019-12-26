@@ -35,7 +35,7 @@ class BibService {
         const dataset = { // one line graph
                 label: library.friendlyName,
                 data: chartData,
-                borderColor: BibService.getRandomColor(),
+                borderColor: library.color,
               };
               return dataset;
       }
