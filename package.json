@@ -20,7 +20,8 @@
     "express": "^4.17.1",
     "module": "^1.2.5",
     "mongodb": "^3.4.0",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vuejs-datepicker": "^1.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.1",

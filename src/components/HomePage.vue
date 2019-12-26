@@ -1,5 +1,17 @@
 <template>
   <div class="hello">
+    <h2>Uni Mannheim Libraries capacity</h2>
+  <div  style="display:flex;">
+    <div style="display:flex;margin-left:10px">
+      Start Date:
+      <datepicker v-model="startDate" @selected="getData"></datepicker>
+    </div>
+    <div style="display:flex;margin-left:100px"> 
+      End Date:
+    <datepicker v-model="endDate" @selected="getData"></datepicker>
+  </div>
+</div>
+
       <div id="chart">
         <canvas id="bib-chart"></canvas>
       </div>
@@ -14,8 +26,12 @@
 import BibService from "../bibservice";
 import * as constants  from "../libraries"
 import Chart from 'chart.js';
+import Datepicker from 'vuejs-datepicker';
 export default {
   name: 'HomePage',
+  components: {
+    Datepicker
+  },
   data() {
     return {
       a5: [],
@@ -24,6 +40,8 @@ export default {
       ehrenhof: [],
       learncenter: [],
       error: '',
+      startDate: new Date("2019-12-12"),
+      endDate: new Date("2019-12-13"),
       chartData: {
       type: 'line',
       data: {
@@ -31,7 +49,6 @@ export default {
         datasets: []
       },
       options: {
-        // responsive: true,
         scales: {
           yAxes: [{
         ticks: {
@@ -40,13 +57,17 @@ export default {
       }],
           xAxes: [{
                 type: 'time',
-                // time: {
-                //     parser: 'YYYY-MM-DD HH:MM:SS'
-                // },
                 display: true,
                 scaleLabel: {
                     display: true,
-                    labelString: 'Date'
+                    labelString: 'Date and time'
+                }
+            }],
+           yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Percentage Full'
                 }
             }]
         }
@@ -55,19 +76,18 @@ export default {
     }
   },
   async created() {
+    this.getData();
+  },
+  methods: {
+  async getData() {
     try {
-
-      let startDate = new Date("2019-12-12");
-      let endDate = new Date("2019-12-13");
-
-      // console.log(startDate, endDate);
-      // console.log(constants.Libraries.a3)
-      this.a5 = await BibService.getBib(constants.Libraries.a5, startDate, endDate);
-      this.a3 = await BibService.getBib(constants.Libraries.a3, startDate, endDate);
-      this.bwl = await BibService.getBib(constants.Libraries.bwl, startDate, endDate);
-      this.ehrenhof = await BibService.getBib(constants.Libraries.ehrenhof, startDate, endDate);
-      this.learncenter = await BibService.getBib(constants.Libraries.learncenter, startDate, endDate);
-      // console.log(this.learncenter.data);
+      this.chartData.data.labels = [];
+      this.chartData.data.datasets = [];
+      this.a5 = await BibService.getBib(constants.Libraries.a5, this.startDate, this.endDate);
+      this.a3 = await BibService.getBib(constants.Libraries.a3, this.startDate, this.endDate);
+      this.bwl = await BibService.getBib(constants.Libraries.bwl, this.startDate, this.endDate);
+      this.ehrenhof = await BibService.getBib(constants.Libraries.ehrenhof, this.startDate, this.endDate);
+      this.learncenter = await BibService.getBib(constants.Libraries.learncenter, this.startDate, this.endDate);
       this.a3.data.forEach(element => {
         const time = element.x;
         if (time && time!== null && time!== undefined) {
@@ -75,19 +95,11 @@ export default {
         }
       });  
       this.chartData.data.datasets.push(this.a5, this.a3, this.bwl, this.ehrenhof, this.learncenter);
-      // this.chartData.data.datasets.push(this.a3);
-
-        // console.log(this.chartData);
-        this.createChart(this.chartData);
+      this.createChart(this.chartData);
     } catch (err) {
       this.error = err;
     }
   },
-  mounted () {
-    // console.log(this.chartData.data.datasets[0]);
-    // this.createChart(this.chartData);
-  },
-  methods: {
   createChart(chartData) {
     const ctx = document.getElementById('bib-chart');
     const myChart = new Chart(ctx, {
@@ -95,34 +107,11 @@ export default {
       data: chartData.data,
       options: chartData.options,
     });
+    myChart.update();
   }
-//   getChartData() {
-//     const localChartData = {
-//       type: 'line',
-//       data: {
-//         labels: [],
-//         datasets: []
-//       },
-//       options: {
-//         responsive: true,
-//         lineTension: 1,
-//         scales: {
-//           yAxes: [{
-//             ticks: {
-//               beginAtZero: true,
-//               padding: 25,
-//             }
-//           }]
-//         }
-//       }
-//     }
-//     return localChartData;
-//   }
 }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
